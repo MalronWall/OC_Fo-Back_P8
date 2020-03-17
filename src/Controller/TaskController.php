@@ -23,10 +23,14 @@ class TaskController extends AbstractController
      */
     public function createAction(Request $request)
     {
-        $task = new Task();
+        $user = $this->getUser();
+
+        $task = new Task($user);
+
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
