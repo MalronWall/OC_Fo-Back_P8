@@ -41,7 +41,9 @@
                 <a href="{{ path('user_create') }}" class="btn btn-primary">Créer un utilisateur</a>
 
                 {% if app.user %}
-                <a href="{{ path('logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
+                <div class="pull-right">
+                Connecté en tant que {{ app.user.username }}
+                <a href="{{ path('logout') }}" class="btn btn-danger">Se déconnecter</a></div>
                 {% endif %}
 
                 {% if not app.user and 'login' != app.request.attributes.get('_route') %}

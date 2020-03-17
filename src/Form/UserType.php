@@ -17,7 +17,8 @@ class UserType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, [
-                'label' => "Nom d'utilisateur"
+                'label' => "Nom d'utilisateur",
+                'required' => true
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -33,12 +34,14 @@ class UserType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => 'Adresse email'
             ])
-            ->add('roles', ChoiceType::class, [
-                'label' => 'Role',
-                'choices'  => [
-                    'User' => "ROLE_USER",
-                    'Admin' => "ROLE_ADMIN",
-                ],
+            ->add('roles',ChoiceType::class, [
+                'label' => "Rôle",
+                'required' => true,
+                'expanded'=> true,
+                'choices' => [
+                    'Utilisateur' => 'ROLE_USER',
+                    'Administrateur' => 'ROLE_ADMIN'
+                ]
             ])
         ;
     }
