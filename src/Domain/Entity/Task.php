@@ -40,10 +40,17 @@ class Task
      */
     private $isDone;
 
-    public function __construct()
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    public function __construct($user)
     {
         $this->createdAt = new \Datetime();
         $this->isDone = false;
+        $this->user = $user;
     }
 
     public function getId()
@@ -89,5 +96,21 @@ class Task
     public function toggle($flag)
     {
         $this->isDone = $flag;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user): void
+    {
+        $this->user = $user;
     }
 }
