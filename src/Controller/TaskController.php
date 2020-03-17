@@ -23,6 +23,8 @@ class TaskController extends AbstractController
      */
     public function createAction(Request $request)
     {
+        $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+
         $user = $this->getUser();
 
         $task = new Task($user);
@@ -51,6 +53,8 @@ class TaskController extends AbstractController
      */
     public function editAction(Task $task, Request $request)
     {
+        $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
@@ -87,11 +91,27 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction(Task $task)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+        $delete = false;
+        if ($task->getUser() === null) {
+            if ($this->isGranted("ROLE_ADMIN")) {
+                $delete = true;
+            }
+        } elseif ($task->getUser()->getUsername() === $this->getUser()->getUsername()) {
+            $delete = true;
+        }
+        if ($delete) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($task);
+            $em->flush();
+
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+
+            return $this->redirectToRoute('task_list');
+        }
+
+        $this->addFlash('error', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
 
         return $this->redirectToRoute('task_list');
     }
