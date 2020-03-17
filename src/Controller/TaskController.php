@@ -93,11 +93,25 @@ class TaskController extends AbstractController
     {
         $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        $delete = false;
+        if ($task->getUser() === null) {
+            if ($this->isGranted("ROLE_ADMIN")) {
+                $delete = true;
+            }
+        } elseif ($task->getUser()->getUsername() === $this->getUser()->getUsername()) {
+            $delete = true;
+        }
+        if ($delete) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($task);
+            $em->flush();
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+
+            return $this->redirectToRoute('task_list');
+        }
+
+        $this->addFlash('error', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
 
         return $this->redirectToRoute('task_list');
     }
