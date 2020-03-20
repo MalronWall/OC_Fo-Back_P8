@@ -21,6 +21,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
@@ -29,10 +30,6 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
 {
     /** @var UrlGeneratorInterface */
     private $urlGenerator;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
     /** @var UserPasswordEncoderInterface */
     private $passwordEncoder;
     /** @var RouterInterface */
@@ -44,13 +41,11 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
 
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
-        EntityManagerInterface $entityManager,
         UserPasswordEncoderInterface $passwordEncoder,
         RouterInterface $router,
         SessionInterface $session
     ) {
         $this->urlGenerator = $urlGenerator;
-        $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->router = $router;
         $this->session = $session;
@@ -124,8 +119,9 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials["username"]]);
-        if (!$user) {
+        try {
+            $user = $userProvider->loadUserByUsername($credentials["username"]);
+        } catch (UsernameNotFoundException $e) {
             throw new CustomUserMessageAuthenticationException("Identifiants invalides !");
         }
 

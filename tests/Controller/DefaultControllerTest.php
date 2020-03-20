@@ -9,13 +9,13 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Controller\DefaultController;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
-class DefaultControllerTest extends WebTestCase
+class DefaultControllerTest extends TestCase
 {
     // https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
     public function testReturnResponse()
