@@ -40,7 +40,7 @@
             <div class="row">
                 <a href="{{ path('user_create') }}" class="btn btn-primary">Créer un utilisateur</a>
 
-                {% if app.user.roles.0 == "ROLE_ADMIN" %}
+                {% if app.user and app.user.roles.0 == "ROLE_ADMIN" %}
                 <a href="{{ path('user_list') }}" class="btn btn-info">Liste des utilisateurs</a>
                 {% endif %}
 
