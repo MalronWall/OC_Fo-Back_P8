@@ -113,4 +113,9 @@ class Task
     {
         $this->user = $user;
     }
+
+    public function isAnonym(): bool
+    {
+        return $this->user === null;
+    }
 }
