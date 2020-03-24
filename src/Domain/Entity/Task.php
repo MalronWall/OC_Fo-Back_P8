@@ -46,13 +46,11 @@ class Task
      */
     private $user;
 
-    public function __construct($user, $title = null, $content = null)
+    public function __construct($user)
     {
         $this->createdAt = new \Datetime();
         $this->isDone = false;
         $this->user = $user;
-        $this->title = $title;
-        $this->content = $content;
     }
 
     public function getId()

@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use function Sodium\add;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,7 +36,7 @@ class UserType extends AbstractType
             ->add('roles',ChoiceType::class, [
                 'label' => "Rôle",
                 'required' => true,
-                'expanded'=> true,
+                'expanded'=> false,
                 'choices' => [
                     'Utilisateur' => 'ROLE_USER',
                     'Administrateur' => 'ROLE_ADMIN'

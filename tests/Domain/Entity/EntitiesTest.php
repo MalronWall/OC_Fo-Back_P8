@@ -31,21 +31,18 @@ class EntitiesTest extends KernelTestCase
         $schemaTool->dropSchema($entityManager->getMetadataFactory()->getAllMetadata());
         $schemaTool->createSchema($entityManager->getMetadataFactory()->getAllMetadata());
 
-        $user = new User(
-                "Username",
-                "password",
-                "email@email.com",
-                "ROLE_USER"
-        );
+        $user = new User();
+        $user->setUsername("Username");
+        $user->setPassword("password");
+        $user->setEmail("email@email.com");
+        $user->setRoles("ROLE_USER");
 
         $entityManager->persist($user);
         $entityManager->flush();
 
-        $this->task = new Task(
-            $user,
-            "Title",
-            "The content of the task"
-        );
+        $this->task = new Task($user);
+        $this->task->setTitle("Title");
+        $this->task->setContent("The content of the task");
 
         $entityManager->persist($this->task);
         $entityManager->flush();
