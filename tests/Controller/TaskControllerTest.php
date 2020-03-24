@@ -281,6 +281,8 @@ class TaskControllerTest extends TestCase
                        ->withConsecutive(['IS_AUTHENTICATED_FULLY'], ['ROLE_ADMIN'])
                        ->willReturnOnConsecutiveCalls(true, false);
 
+        $this->user->method("getId")->willReturn(null);
+
         $response = $this->controller->deleteTaskAction($task);
 
         self::assertEquals('La tâche a bien été supprimée.', $this->session->getFlashBag()->get("success")[0]);

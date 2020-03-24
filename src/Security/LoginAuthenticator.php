@@ -8,9 +8,6 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Domain\Entity\User;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,8 +29,6 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
     private $urlGenerator;
     /** @var UserPasswordEncoderInterface */
     private $passwordEncoder;
-    /** @var RouterInterface */
-    private $router;
     /**
      * @var SessionInterface
      */
@@ -42,12 +37,10 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
         UserPasswordEncoderInterface $passwordEncoder,
-        RouterInterface $router,
         SessionInterface $session
     ) {
         $this->urlGenerator = $urlGenerator;
         $this->passwordEncoder = $passwordEncoder;
-        $this->router = $router;
         $this->session = $session;
     }
 
@@ -167,6 +160,6 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $this->session->getFlashBag()->add("success", "Connexion réussie !");
-        return new RedirectResponse($this->router->generate('homepage'));
+        return new RedirectResponse($this->urlGenerator->generate('homepage'));
     }
 }

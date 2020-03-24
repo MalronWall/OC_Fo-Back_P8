@@ -43,6 +43,25 @@ class User implements UserInterface
      */
     private $roles;
 
+    /**
+     * User constructor.
+     * @param $username
+     * @param $password
+     * @param $email
+     * @param $roles
+     */
+    public function __construct(
+        $username = null,
+        $password = null,
+        $email = null,
+        $roles = null
+    ) {
+        $this->username = $username;
+        $this->password = $password;
+        $this->email = $email;
+        $this->roles[] = $roles;
+    }
+
     public function getId()
     {
         return $this->id;
@@ -60,7 +79,7 @@ class User implements UserInterface
 
     public function getSalt()
     {
-        return;
+        return "";
     }
 
     public function getPassword()
