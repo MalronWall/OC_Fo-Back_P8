@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Domain\Entity\Task;
+use App\Domain\Entity\User;
 use App\Form\TaskType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,26 +94,24 @@ class TaskController extends AbstractController
     {
         $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
 
-        $delete = false;
-        if ($task->getUser() === null) {
-            if ($this->isGranted("ROLE_ADMIN")) {
-                $delete = true;
-            }
-        } elseif ($task->getUser()->getUsername() === $this->getUser()->getUsername()) {
-            $delete = true;
-        }
-        if ($delete) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($task);
-            $em->flush();
+        if ((!$task->isAnonym() || !$this->isGranted('ROLE_ADMIN')) &&
+            ($task->isAnonym() || !$this->checkUserTaskUserConnected($task))) {
 
-            $this->addFlash('success', 'La tâche a bien été supprimée.');
+            $this->addFlash('error', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
 
             return $this->redirectToRoute('task_list');
         }
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($task);
+        $em->flush();
 
-        $this->addFlash('error', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
+        $this->addFlash('success', 'La tâche a bien été supprimée.');
 
         return $this->redirectToRoute('task_list');
+    }
+
+    private function checkUserTaskUserConnected(Task $task)
+    {
+        return $this->getUser() && $task->getUser() && $task->getUser()->getId() === $this->getUser()->getId();
     }
 }

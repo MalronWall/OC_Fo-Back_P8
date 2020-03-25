@@ -106,11 +106,17 @@ class Task
         return $this->user;
     }
 
-    /**
-     * @param mixed $user
-     */
-    public function setUser($user): void
+// COMMENTED TO AVOID TO CHANGE THE USER AFTER CREATION
+//    /**
+//     * @param mixed $user
+//     */
+//    public function setUser($user): void
+//    {
+//        $this->user = $user;
+//    }
+
+    public function isAnonym(): bool
     {
-        $this->user = $user;
+        return $this->user === null;
     }
 }
