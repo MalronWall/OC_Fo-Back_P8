@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Domain\Entity\Task;
+use App\Domain\Entity\User;
 use App\Form\TaskType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,8 +94,8 @@ class TaskController extends AbstractController
     {
         $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
 
-        if (($task->getUser() || false === $this->isGranted('ROLE_ADMIN')) &&
-            $task->getUser()->getUsername() !== $this->getUser()->getUsername()) {
+        if ((!$task->isAnonym() || !$this->isGranted('ROLE_ADMIN')) &&
+            ($task->isAnonym() || !$this->checkUserTaskUserConnected($task))) {
 
             $this->addFlash('error', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
 
@@ -107,7 +108,10 @@ class TaskController extends AbstractController
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
         return $this->redirectToRoute('task_list');
+    }
 
-
+    private function checkUserTaskUserConnected(Task $task)
+    {
+        return $this->getUser() && $task->getUser() && $task->getUser()->getId() === $this->getUser()->getId();
     }
 }

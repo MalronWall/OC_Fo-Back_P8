@@ -8,19 +8,16 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Domain\Entity\User;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
@@ -29,30 +26,18 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
 {
     /** @var UrlGeneratorInterface */
     private $urlGenerator;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
     /** @var UserPasswordEncoderInterface */
     private $passwordEncoder;
-    /** @var RouterInterface */
-    private $router;
-    /**
-     * @var SessionInterface
-     */
+    /** @var SessionInterface */
     private $session;
 
     public function __construct(
         UrlGeneratorInterface $urlGenerator,
-        EntityManagerInterface $entityManager,
         UserPasswordEncoderInterface $passwordEncoder,
-        RouterInterface $router,
         SessionInterface $session
     ) {
         $this->urlGenerator = $urlGenerator;
-        $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
-        $this->router = $router;
         $this->session = $session;
     }
 
@@ -61,7 +46,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return string
      */
-    protected function getLoginUrl()
+    public function getLoginUrl()
     {
         return $this->urlGenerator->generate('login');
     }
@@ -124,8 +109,9 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials["username"]]);
-        if (!$user) {
+        try {
+            $user = $userProvider->loadUserByUsername($credentials["username"]);
+        } catch (UsernameNotFoundException $e) {
             throw new CustomUserMessageAuthenticationException("Identifiants invalides !");
         }
 
@@ -171,6 +157,6 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         $this->session->getFlashBag()->add("success", "Connexion réussie !");
-        return new RedirectResponse($this->router->generate('homepage'));
+        return new RedirectResponse($this->urlGenerator->generate('homepage'));
     }
 }

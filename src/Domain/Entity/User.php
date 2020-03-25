@@ -60,7 +60,7 @@ class User implements UserInterface
 
     public function getSalt()
     {
-        return;
+        return "";
     }
 
     public function getPassword()
