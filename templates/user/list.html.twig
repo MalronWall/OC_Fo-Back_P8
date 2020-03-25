@@ -27,7 +27,7 @@
                         <th scope="row">{{ loop.index }}</th>
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
-                        <td>{{ user.roles.0 == "ROLE_ADMIN" ? "<span class='text-danger'>Administrateur</span>" : "<span class='text-success'>Utilisateur</span>" }}</td>
+                        <td>{{ user.roles == "ROLE_ADMIN" ? "<span class='text-danger'>Administrateur</span>" : "<span class='text-success'>Utilisateur</span>" }}</td>
                         <td>
                             <a href="{{ path('user_edit', {'id' : user.id}) }}" class="btn btn-success btn-sm">Edit</a>
                         </td>
