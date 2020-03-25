@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -29,9 +28,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
     private $urlGenerator;
     /** @var UserPasswordEncoderInterface */
     private $passwordEncoder;
-    /**
-     * @var SessionInterface
-     */
+    /** @var SessionInterface */
     private $session;
 
     public function __construct(
@@ -49,7 +46,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator
      *
      * @return string
      */
-    protected function getLoginUrl()
+    public function getLoginUrl()
     {
         return $this->urlGenerator->generate('login');
     }
