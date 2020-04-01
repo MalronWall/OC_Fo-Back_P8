@@ -35,7 +35,7 @@ class EntitiesTest extends KernelTestCase
         $user->setUsername("Username");
         $user->setPassword("password");
         $user->setEmail("email@email.com");
-        $user->setRoles("ROLE_USER");
+        $user->setRoles(["ROLE_USER", "ROLE_ADMIN"]);
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -120,7 +120,7 @@ class EntitiesTest extends KernelTestCase
         self::assertIsArray($this->task->getUser()->getRoles());
         self::assertEquals("ROLE_USER", $this->task->getUser()->getRoles()[0]);
 
-        $this->task->getUser()->setRoles("ROLE_ADMIN");
+        $this->task->getUser()->setRoles(["ROLE_USER", "ROLE_ADMIN"]);
 
         self::assertIsArray($this->task->getUser()->getRoles());
         self::assertEquals("ROLE_ADMIN", $this->task->getUser()->getRoles()[1]);
