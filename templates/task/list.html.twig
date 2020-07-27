@@ -3,7 +3,10 @@
 {% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_content.jpg') }}" alt="todo list">{% endblock %}
 
 {% block body %}
-    <a href="{{ path('task_create') }}" class="btn btn-info">Nouvelle tâche</a>
+    <a href="{{ path('homepage') }}" class="btn btn-info">Retour</a>
+    {% if app.user %}
+    <a href="{{ path('task_create') }}" class="btn btn-primary">Nouvelle tâche</a>
+    {% endif %}
     <div class="row">
         {% for task in tasks %}
         <div class="col-sm-4 col-lg-4 col-md-4">
@@ -18,16 +21,24 @@
                         ~ Par {{ task.user == null ? "Anonyme" : task.user.username }}
                     </small>
                 </div>
+                {% if app.user %}
                 <div>
                     <form action="{{ path('task_toggle', {'id' : task.id }) }}">
                         <button class="btn btn-success btn-sm pull-right">
-                            {% if not task.isDone %}Marquer comme faite{% else %}Marquer non terminée{% endif %}
+                            {% if not task.isDone %}
+                            Marquer comme faite <span class="glyphicon glyphicon-ok text-success"></span>
+                            {% else %}
+                            Marquer non terminée <span class="glyphicon glyphicon-remove text-danger"></span>
+                            {% endif %}
                         </button>
                     </form>
+                    {% if app.user == task.user or (task.user == null and "ROLE_ADMIN" in app.user.roles) %}
                     <form action="{{ path('task_delete', {'id' : task.id }) }}">
                         <button class="btn btn-danger btn-sm pull-right">Supprimer</button>
                     </form>
+                    {% endif %}
                 </div>
+                {% endif %}
             </div>
         </div>
         {% else %}
